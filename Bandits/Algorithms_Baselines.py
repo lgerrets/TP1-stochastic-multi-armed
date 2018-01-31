@@ -23,9 +23,9 @@ class FTL:
 
 
 class UCB: # TP 2.1
-    def __init__(self, nbArms, maxReward=1.):
+    def __init__(self, nbArms, alpha=3, maxReward=1.):
         self.A = nbArms
-        self.Alpha = 3
+        self.Alpha = alpha
         self.MaxReward = maxReward # les rewards seront normalisées sur [0,1]
         self.clear()
 
@@ -47,7 +47,7 @@ class UCB: # TP 2.1
         self.Time += 1
 
     def name(self):
-        return "UCB"
+        return "UCB-"+str(self.Alpha)
 
 
 class KLUCB:

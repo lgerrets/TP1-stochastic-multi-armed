@@ -97,4 +97,23 @@ def plotOneBanditOneLearnerNRuns(all_cumulativeregrets):
     pl.ylabel("Mean of cumulative regrets", fontsize=16)
     pl.plot(np.arange(0,timeHorizon,1),averageregret)
     pl.show()
-    
+
+def OneBanditNLearnersNRuns(bandit, learners, timeHorizon, n):
+    m = len(learners)
+    all_cumulativeregrets = np.zeros((timeHorizon,n,m))
+    for i in range(m):
+        all_cumulativeregrets[:,:,i] = OneBanditOneLearnerNRuns(bandit, learners[i], timeHorizon, n)
+    return all_cumulativeregrets
+
+def plotOneBanditNLearnersNRuns(all_cumulativeregrets,learners):
+    timeHorizon,n,m = all_cumulativeregrets.shape
+    averageregret = np.mean(all_cumulativeregrets,axis=1)
+    pl.figure(2)
+    pl.clf()
+    pl.xlabel("Time steps", fontsize=16)
+    pl.ylabel("Mean of cumulative regrets", fontsize=16)
+    x = np.arange(0,timeHorizon,1)
+    for i in range(m):
+        pl.plot(x,averageregret[:,i],label=learners[i].name())
+    pl.legend()
+    pl.show()
