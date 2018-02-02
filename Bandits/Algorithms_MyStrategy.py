@@ -79,13 +79,17 @@ class UCB_3_3_a:
         self.Means = np.ones(self.A)
         self.Time = 1
 
-    def chooseArmToPlay(self): # modified from class UCB_3_1
+    def chooseArmToPlay(self): # modified from class UCB_3_2
         if self.Time<=self.A: # Draw each arm once
             return self.Time-1
         else:
             mu_tilde = np.zeros(self.A)
             mu_tilde = self.Means+np.sqrt(self.Alpha*np.log(np.ceil(np.log(self.Time)/np.log(self.Alpha))/self.Delta)/(2*self.NbPulls))
-            return np.argmax(mu_tilde)
+            mu_tilde[mu_tilde>1] = 1
+            best = np.max(mu_tilde)
+            pulls = np.zeros(self.A)
+            pulls[mu_tilde!=best] = pulls[0]+42
+            return np.argmin(pulls) # = argmin(Na ; a in argmax(min(1,mu_tilde)) )
     
     def receiveReward(self, arm, reward):
         reward = reward/self.MaxReward
@@ -108,13 +112,17 @@ class UCB_3_3_b:
         self.Means = np.ones(self.A)
         self.Time = 1
 
-    def chooseArmToPlay(self): # modified from class UCB_3_1
+    def chooseArmToPlay(self): # modified from class UCB_3_2
         if self.Time<=self.A: # Draw each arm once
             return self.Time-1
         else:
             mu_tilde = np.zeros(self.A)
             mu_tilde = self.Means+np.sqrt((1+1/self.NbPulls)*np.log(np.sqrt(self.NbPulls+1)/self.Delta)/(2*self.NbPulls))
-            return np.argmax(mu_tilde)
+            mu_tilde[mu_tilde>1] = 1
+            best = np.max(mu_tilde)
+            pulls = np.zeros(self.A)
+            pulls[mu_tilde!=best] = pulls[0]+42
+            return np.argmin(pulls) # = argmin(Na ; a in argmax(min(1,mu_tilde)) )
     
     def receiveReward(self, arm, reward):
         reward = reward/self.MaxReward

@@ -1,5 +1,6 @@
 import pylab as pl
 import numpy as np
+import Bandits.Algorithms_kullback as kl # modif +Bandits.
 from copy import deepcopy
 
 def OneBanditOneLearnerOneRun(bandit, learner, timeHorizon):
@@ -105,7 +106,7 @@ def OneBanditNLearnersNRuns(bandit, learners, timeHorizon, n):
         all_cumulativeregrets[:,:,i] = OneBanditOneLearnerNRuns(bandit, learners[i], timeHorizon, n)
     return all_cumulativeregrets
 
-def plotOneBanditNLearnersNRuns(all_cumulativeregrets,learners):
+def plotOneBanditNLearnersNRuns(all_cumulativeregrets,learners,bandit=None,plot_bound=False):
     timeHorizon,n,m = all_cumulativeregrets.shape
     averageregret = np.mean(all_cumulativeregrets,axis=1)
     pl.figure(2)
@@ -115,5 +116,18 @@ def plotOneBanditNLearnersNRuns(all_cumulativeregrets,learners):
     x = np.arange(0,timeHorizon,1)
     for i in range(m):
         pl.plot(x,averageregret[:,i],label=learners[i].name())
+    if(bandit!=None and plot_bound==True):
+        times = np.arange(1,timeHorizon+1,1)
+        pl.plot(times,complexity(bandit)*np.log(times),label="Lower bound")
     pl.legend()
     pl.show()
+
+def complexity(MAB):
+    means = MAB.armMeans
+    best = means[MAB.bestarm]
+    somme = 0
+    for i in range(MAB.A):
+        if i!=MAB.bestarm:
+            somme += (best-means[i])/kl.klBern(best,means[i])
+    return somme
+    
